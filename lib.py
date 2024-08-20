@@ -4,7 +4,9 @@ import schemdraw
 import schemdraw.elements as elm
 import matplotlib
 import warnings
+import re
 import os
+import serial
 from pysvgexport import SVGExport
 
 # Suppress specific warnings
@@ -123,3 +125,24 @@ def exportPng():
 
     subprocess.run(['svgexport', '-f', high_pass_source, '-s', '20', '-o', high_pass_target])
 
+def sendCommand(inductor_low, capacitor_low, resistor_high1, capacitor_high, inductor_high, resistor_high2) :
+    print(inductor_low, capacitor_low, resistor_high1, capacitor_high, inductor_high, resistor_high2)
+    pattern = r'[-+]?\d*.?\d+'
+    num1 = re.match(pattern, inductor_low).group()
+    num2 = re.match(pattern, capacitor_low).group()
+    num3 = re.match(pattern, resistor_high1).group()
+    num4 = re.match(pattern, capacitor_high).group()
+    num5 = re.match(pattern, inductor_high).group()
+    num6 = re.match(pattern, resistor_high2).group()
+    print(num1, num2, num3, num4, num5, num6)
+    ser = serial.Serial(port, baudrate)
+
+    ser.write(num1.encode() + b'\n')
+    ser.write(num2.encode() + b'\n')
+    ser.write(num3.encode() + b'\n')
+    ser.write(num4.encode() + b'\n')
+    ser.write(num5.encode() + b'\n')
+    ser.write(num6.encode() + b'\n')
+
+    ser.close() 
+    

@@ -89,6 +89,20 @@ def saveSchematicsPng():
     exportPng()
     return jsonify({ "status": "ok" })
 
+@app.route('/sendArduino', methods = ['GET'])
+def sendArduino() :
+    print('Sending to Arduino')
+    query_args = request.args
+
+    sendCommand(
+        query_args.get('inductor_low'),
+        query_args.get('capacitor_low'),
+        query_args.get('resistor_high1'),
+        query_args.get('capacitor_high'),
+        query_args.get('inductor_high'),
+        query_args.get('resistor_high2')
+    )
+    return jsonify({"status": "ok"})
 
 if __name__ == '__main__':
     app.run(debug=True)

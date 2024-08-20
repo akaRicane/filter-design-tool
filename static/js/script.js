@@ -43,6 +43,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveBtn.disabled = false;
             });
     });
+
+    const sendBtn = document.getElementById('send-to-arduino');
+    sendBtn.addEventListener('click', function() {
+        const queryParameters = {};
+        const parametersWrapper = document.getElementById('parameters-wrapper');
+
+        Array.from(parametersWrapper.children).forEach(child => {
+            const label = child.children[0].textContent;
+            const selectValue = child.children[1].value;
+            const variable = child.children[1].id;
+            queryParameters[variable] = selectValue;
+        });
+        
+        // Convert queryParameters object to query string
+        const queryString = new URLSearchParams(queryParameters).toString();
+        sendBtn.textContent = 'Sending...';
+        sendBtn.disabled = true;
+        fetch(`/sendArduino?${queryString}`)
+        .then(response => response.json())
+        .then(data => {
+            sendBtn.textContent = 'Send Arduino';
+            sendBtn.disabled = false;
+        })
+    })
     
 });
 
@@ -93,6 +117,12 @@ function createLeftPanel() {
     saveBtn.className = 'left-panel-button';
     saveBtn.textContent = 'Save schematics';
     leftPanel.appendChild(saveBtn);
+
+    const sendBtn = document.createElement('button');
+    sendBtn.id = 'send-to-arduino';
+    sendBtn.className = 'left-panel-button';
+    sendBtn.textContent = 'Send Arduino';
+    leftPanel.appendChild(sendBtn);
 
     return leftPanel;
 }
